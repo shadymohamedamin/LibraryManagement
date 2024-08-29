@@ -1,0 +1,84 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\tasks\\task3\\LibraryManagement\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|e:\\tasks\\task3\\librarymanagement\\librarymanagement\\data\\migrations\\20240829150606_add-book-model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|solutionrelative:librarymanagement\\data\\migrations\\20240829150606_add-book-model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/LibraryManagementDBSQL/True/SqlTable/dbo.AspNetUsers.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|e:\\tasks\\task3\\librarymanagement\\librarymanagement\\scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|solutionrelative:librarymanagement\\scaffoldingreadme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|e:\\tasks\\task3\\librarymanagement\\librarymanagement\\librarymanagement.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{583DFA08-F6ED-4A58-ADCB-CA5974C07595}|LibraryManagement\\LibraryManagement.csproj|solutionrelative:librarymanagement\\librarymanagement.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "20240829150606_add-book-model.cs",
+              "DocumentMoniker": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\Data\\Migrations\\20240829150606_add-book-model.cs",
+              "RelativeDocumentMoniker": "LibraryManagement\\Data\\Migrations\\20240829150606_add-book-model.cs",
+              "ToolTip": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\Data\\Migrations\\20240829150606_add-book-model.cs",
+              "RelativeToolTip": "LibraryManagement\\Data\\Migrations\\20240829150606_add-book-model.cs",
+              "ViewState": "AQIAAAoAAADAzMzMzMwYwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-29T15:06:12.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "dbo.AspNetUsers [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/LibraryManagementDBSQL/True/SqlTable/dbo.AspNetUsers.sql",
+              "ToolTip": "dbo.AspNetUsers [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2024-08-29T14:35:07.468Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ScaffoldingReadMe.txt",
+              "DocumentMoniker": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\ScaffoldingReadMe.txt",
+              "RelativeDocumentMoniker": "LibraryManagement\\ScaffoldingReadMe.txt",
+              "ToolTip": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\ScaffoldingReadMe.txt",
+              "RelativeToolTip": "LibraryManagement\\ScaffoldingReadMe.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-08-29T14:22:29.562Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LibraryManagement",
+              "DocumentMoniker": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\LibraryManagement.csproj",
+              "RelativeDocumentMoniker": "LibraryManagement\\LibraryManagement.csproj",
+              "ToolTip": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\LibraryManagement.csproj",
+              "RelativeToolTip": "LibraryManagement\\LibraryManagement.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-08-29T14:03:43.562Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
