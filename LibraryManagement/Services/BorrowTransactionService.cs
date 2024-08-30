@@ -93,7 +93,7 @@ namespace LibraryManagement.Services
         Borrowers = borrowTransactions.Select(bt => new UserBookViewModel // Change to UserBookViewModel if needed
         {
             UserName = bt.User.UserName,
-            CopiesBorrowed = book.TotalCopies//bt.Copies // Adjust if needed
+            CopiesBorrowed = bt.Copies // Adjust if needed
         }).ToList()
     };
 
@@ -102,18 +102,17 @@ namespace LibraryManagement.Services
 
 
 
-    public async Task<IEnumerable<BorrowedBookViewModel>> GetBorrowedBooksByUserAsync(string userId)
+        public async Task<IEnumerable<BorrowedBookViewModel>> GetBorrowedBooksByUserAsync(string userId)
         {
             var borrowTransactions = await _context.BorrowTransactions
                 .Where(bt => bt.UserId == userId)
                 .Include(bt => bt.Book) // Ensure Book is loaded
                 .ToListAsync();
-
             var borrowedBooks = borrowTransactions.Select(bt => new BorrowedBookViewModel
             {
                 BookId = bt.Book.Id,
                 BookName = bt.Book.Name,
-                CopiesBorrowed = bt.Book.TotalCopies // Or use any other property relevant to your data
+                CopiesBorrowed = bt.Copies // Or use any other property relevant to your data
             }).ToList();
 
             return borrowedBooks;

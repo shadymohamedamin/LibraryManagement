@@ -154,7 +154,8 @@
                         @if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
                         {
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                            <a class="btn btn-info" asp-action="BookDetails" asp-route-id="@item.Id">View Details</a>
+                            @* <a class="btn btn-info" asp-action="BookDetails" asp-route-id="@item.Id">View Details</a> *@
+                            <a class="btn btn-info" asp-action="BookDetails" asp-route-bookId="@item.Id">View Details</a>
                         }
                     }
                 </td>

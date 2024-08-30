@@ -6,6 +6,8 @@ using LibraryManagement.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 using LibraryManagement.Repositories;
 using System;
+using System.Data;
+
 
 namespace LibraryManagement.Repositories
 {
@@ -91,5 +93,35 @@ namespace LibraryManagement.Repositories
                 .Where(bt => bt.BookId == bookId)
                 .ToListAsync();
         }
+
+
+
+
+        public async Task<BorrowTransaction> GetBorrowTransactionAsync(Guid bookId,string userId)
+    {
+        return await _context.BorrowTransactions
+            .FirstOrDefaultAsync(bt => bt.UserId == userId && bt.BookId == bookId);
+    }
+
+    public async Task AddBorrowTransactionAsync(BorrowTransaction borrowTransaction)
+    {
+        await _context.BorrowTransactions.AddAsync(borrowTransaction);
+    }
+
+    public async Task UpdateBorrowTransactionAsync(BorrowTransaction borrowTransaction)
+    {
+        _context.BorrowTransactions.Update(borrowTransaction);
+    }
+
+    /*public async Task RemoveBorrowTransactionAsync(BorrowTransaction borrowTransaction)
+    {
+        _context.BorrowTransactions.Remove(borrowTransaction);
+    }*/
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel)
+    {
+        return await _context.Database.BeginTransactionAsync(isolationLevel);
+    }
+
     }
 }

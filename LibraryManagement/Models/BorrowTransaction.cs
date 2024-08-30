@@ -16,11 +16,9 @@ namespace LibraryManagement.Models
         public string UserId { get; set; }
         public IdentityUser User { get; set; }
 
-        // [Required]
-        // public int NumberOfCopies { get; set; }
+        public int Copies { get; set; }
 
-        // [Required]
-        // public DateTime DateBorrowed { get; set; } = DateTime.UtcNow;
+        public DateTime DateBorrowed { get; set; } = DateTime.UtcNow;
     }
 
 }

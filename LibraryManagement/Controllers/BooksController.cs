@@ -408,12 +408,13 @@ public async Task<IActionResult> Borrow(Guid bookId)
         Borrowers = borrowTransactions.Select(bt => new UserBookViewModel
         {
             UserName = bt.User?.UserName ?? "Unknown User", // Handle null User
-            CopiesBorrowed = book.AvailableCopies//bt.Copies // Use the correct property to show borrowed count
+            CopiesBorrowed = bt.Copies // Ensure this is the correct property
         }).ToList()
     };
 
     return View(viewModel);
 }
+
 
 
 
