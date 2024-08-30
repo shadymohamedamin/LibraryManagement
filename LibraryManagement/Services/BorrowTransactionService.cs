@@ -26,11 +26,9 @@ namespace LibraryManagement.Services
 
         public async Task RemoveTransactionsByBookAndUserAsync(Guid bookId, string userId)
         {
-            // Retrieve all transactions for the given book and user
             var transactions = await _borrowTransactionRepository.GetTransactionsByBookAndUserAsync(bookId, userId);
             var transactionList = transactions.ToList();
 
-            // Retrieve the book to update its available copies
             var book = await _bookRepository.GetBookByIdAsync(bookId);
 
             if (book == null)
@@ -38,67 +36,49 @@ namespace LibraryManagement.Services
                 throw new ArgumentException("Book not found.");
             }
 
-            // Remove all transactions
             foreach (var transaction in transactionList)
             {
                 await _borrowTransactionRepository.RemoveBorrowTransactionAsync(transaction);
             }
 
-            // Update the book's available copies
-            book.AvailableCopies += transactionList.Count; // Add the number of returned books
+            book.AvailableCopies += transactionList.Count;
             await _bookRepository.UpdateBookAsync(book);
 
-            // Commit changes
             await _borrowTransactionRepository.SaveChangesAsync();
         }
 
-        // public async Task<IEnumerable<BorrowedBookViewModel>> GetBorrowedBooksByUserAsync(string userId)
-        // {
-        //     // Fetch all borrow transactions for the user
-        //     var transactions = await _borrowTransactionRepository.GetTransactionsByUserAsync(userId);
-            
-        //     // Fetch book details based on transactions
-        //     var borrowedBooks = transactions.GroupBy(t => t.BookId)
-        //                                     .Select(g => new BorrowedBookViewModel
-        //                                     {
-        //                                         BookId = g.Key,
-        //                                         BookName = g.First().Book.Name, // Ensure 'Book' property exists in BorrowTransaction
-        //                                         CopiesBorrowed = g.Count()
-        //                                     }).ToList();
-
-        //     return borrowedBooks;
-        // }
         public async Task<BookDetailsViewModel> GetBookDetailsAsync(Guid bookId)
-{
-    var book = await _context.Books
-        .Where(b => b.Id == bookId)
-        .FirstOrDefaultAsync();
-
-    if (book == null)
-    {
-        return null; // Handle not found case
-    }
-
-    var borrowTransactions = await _context.BorrowTransactions
-        .Where(bt => bt.BookId == bookId)
-        .Include(bt => bt.User)
-        .ToListAsync();
-
-    var viewModel = new BookDetailsViewModel
-    {
-        BookId = book.Id,
-        BookName = book.Name,
-        TotalCopies = book.TotalCopies,
-        AvailableCopies = book.AvailableCopies,
-        Borrowers = borrowTransactions.Select(bt => new UserBookViewModel // Change to UserBookViewModel if needed
         {
-            UserName = bt.User.UserName,
-            CopiesBorrowed = bt.Copies // Adjust if needed
-        }).ToList()
-    };
+            var book = await _context.Books
+                .Where(b => b.Id == bookId)
+                .FirstOrDefaultAsync();
 
-    return viewModel;
-}
+            if (book == null)
+            {
+                return null; 
+            }
+
+            var borrowTransactions = await _context.BorrowTransactions
+                .Where(bt => bt.BookId == bookId)
+                .Include(bt => bt.User)
+                .ToListAsync();
+
+            var viewModel = new BookDetailsViewModel
+            {
+                BookId = book.Id,
+                ImagePath=book.ImagePath,
+                BookName = book.Name,
+                TotalCopies = book.TotalCopies,
+                AvailableCopies = book.AvailableCopies,
+                Borrowers = borrowTransactions.Select(bt => new UserBookViewModel 
+                {
+                    UserName = bt.User.UserName,
+                    CopiesBorrowed = bt.Copies
+                }).ToList()
+            };
+
+            return viewModel;
+        }
 
 
 
@@ -106,13 +86,14 @@ namespace LibraryManagement.Services
         {
             var borrowTransactions = await _context.BorrowTransactions
                 .Where(bt => bt.UserId == userId)
-                .Include(bt => bt.Book) // Ensure Book is loaded
+                .Include(bt => bt.Book) 
                 .ToListAsync();
             var borrowedBooks = borrowTransactions.Select(bt => new BorrowedBookViewModel
             {
                 BookId = bt.Book.Id,
+                ImagePath = bt.Book.ImagePath,
                 BookName = bt.Book.Name,
-                CopiesBorrowed = bt.Copies // Or use any other property relevant to your data
+                CopiesBorrowed = bt.Copies 
             }).ToList();
 
             return borrowedBooks;

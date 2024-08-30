@@ -19,7 +19,6 @@ namespace LibraryManagement.Data
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                // Ensure Admin role exists
                 if (!await roleManager.RoleExistsAsync(AdminRoleName))
                 {
                     await roleManager.CreateAsync(new IdentityRole(AdminRoleName));
@@ -29,7 +28,6 @@ namespace LibraryManagement.Data
                     await roleManager.CreateAsync(new IdentityRole(UserRoleName));
                 }
 
-                // Ensure Admin user exists
                 var adminUser = await userManager.FindByEmailAsync(AdminUserEmail);
                 if (adminUser == null)
                 {
@@ -42,7 +40,6 @@ namespace LibraryManagement.Data
                     await userManager.CreateAsync(adminUser, AdminPassword);
                 }
 
-                // Ensure Admin user has Admin role
                 if (!await userManager.IsInRoleAsync(adminUser, AdminRoleName))
                 {
                     await userManager.AddToRoleAsync(adminUser, AdminRoleName);

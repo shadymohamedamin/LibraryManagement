@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\wwwroot\\images\\herooo.png",
+      "PackagePath": "staticwebassets\\images\\herooo.png"
+    },
+    {
       "Id": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

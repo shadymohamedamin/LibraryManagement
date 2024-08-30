@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "01gxwl9U2Fq+tq3l1Ua7Anx7ARYoaLQFBGk+OMZglr4=",
+  "Hash": "kQsIp7kYee1POZTOjad+tWK14sV+UqS3abUF6yjKW9g=",
   "Source": "LibraryManagement",
   "BasePath": "_content/LibraryManagement",
   "Mode": "Default",
@@ -1231,6 +1231,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\wwwroot\\images\\herooo.png",
+      "SourceId": "LibraryManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\wwwroot\\",
+      "BasePath": "_content/LibraryManagement",
+      "RelativePath": "images/herooo.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\herooo.png"
     },
     {
       "Identity": "E:\\tasks\\task3\\LibraryManagement\\LibraryManagement\\wwwroot\\js\\site.js",

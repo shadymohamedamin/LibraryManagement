@@ -113,11 +113,6 @@ namespace LibraryManagement.Repositories
         _context.BorrowTransactions.Update(borrowTransaction);
     }
 
-    /*public async Task RemoveBorrowTransactionAsync(BorrowTransaction borrowTransaction)
-    {
-        _context.BorrowTransactions.Remove(borrowTransaction);
-    }*/
-
     public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel)
     {
         return await _context.Database.BeginTransactionAsync(isolationLevel);

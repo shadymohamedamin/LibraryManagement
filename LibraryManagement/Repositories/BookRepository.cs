@@ -72,14 +72,5 @@ namespace LibraryManagement.Repositories
                 .CountAsync(t => t.BookId == bookId && t.UserId == userId);
         }
 
-        /*public async Task DeleteBookAsync(Guid id)
-        {
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
-            {
-                _context.Books.Remove(book);
-                await _context.SaveChangesAsync();
-            }
-        }*/
     }
 }
