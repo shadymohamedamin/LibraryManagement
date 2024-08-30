@@ -11,10 +11,13 @@ namespace LibraryManagement.Services
     public class BookService : IBookService
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IBorrowTransactionRepository _borrowTransactionRepository;
 
-        public BookService(IBookRepository bookRepository)
+
+        public BookService(IBookRepository bookRepository, IBorrowTransactionRepository borrowTransactionRepository)
         {
             _bookRepository = bookRepository;
+            _borrowTransactionRepository = borrowTransactionRepository;
         }
 
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
@@ -116,36 +119,100 @@ namespace LibraryManagement.Services
             }
         }
 
+        /*public async Task RemoveByBookAndUserAsync(Guid bookId, string userId)
+        {
+            var transactions = _context.BorrowTransactions
+                .Where(t => t.BookId == bookId && t.UserId == userId);
 
-        public async Task ReturnBookAsync(Guid bookId, string userId)
+            _context.BorrowTransactions.RemoveRange(transactions);
+            await _context.SaveChangesAsync();
+        }*/
+
+
+        /*public async Task<IEnumerable<Book>> GetBorrowedBooksAsync(string userId)
+        {
+            return await _bookRepository.GetBorrowedBooksByUserAsync(userId);
+        }*/
+
+        // Handle the logic of returning a book
+        /*public async Task ReturnBookAsync(Guid bookId, string userId)
         {
             using var transaction = await _bookRepository.BeginTransactionAsync();
+
             try
             {
-                var borrowTransaction = await _bookRepository.GetTransactionAsync(bookId, userId);
-                if (borrowTransaction == null)
-                {
-                    throw new InvalidOperationException("No borrow record found.");
-                }
-
+                // Get the book
                 var book = await _bookRepository.GetBookByIdAsync(bookId);
                 if (book == null)
                 {
-                    throw new InvalidOperationException("Book not found.");
+                    throw new ArgumentException("Book not found.");
                 }
 
-                book.AvailableCopies += 1;
+                // Count the number of transactions
+                int transactionCount = await _bookRepository.CountTransactionsByBookAndUserAsync(bookId, userId);
+
+                // Remove all transactions for the book and user
+                await _borrowTransactionRepository.RemoveByBookAndUserAsync(bookId, userId);
+
+                // Update the book's copies
+                book.AvailableCopies += transactionCount;
+                book.TotalCopies += transactionCount; // Adjust if necessary
                 await _bookRepository.UpdateBookAsync(book);
 
-                await _bookRepository.RemoveBorrowTransactionAsync(borrowTransaction);
-                await _bookRepository.SaveChangesAsync();
+                // Commit the transaction
                 await transaction.CommitAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                throw;
+                throw new InvalidOperationException("Error processing the return request.", ex);
             }
+        }*/
+        public async Task ReturnBookAsync(Guid bookId, string userId)
+        {
+            using (var transaction = await _bookRepository.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Count the number of borrowed copies
+                    var borrowedTransactions = await _borrowTransactionRepository.GetTransactionsByBookAndUserAsync(bookId, userId);
+                    var borrowedCount = borrowedTransactions.Count();
+
+                    // Remove transactions
+                    await _borrowTransactionRepository.RemoveByBookAndUserAsync(bookId, userId);
+
+                    // Update book copies
+                    var book = await _bookRepository.GetBookByIdAsync(bookId);
+                    book.AvailableCopies += borrowedCount;
+                    //book.TotalCopies += borrowedCount;
+
+                    await _bookRepository.UpdateBookAsync(book);
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<Book>> GetBorrowedBooksAsync(string userId)
+        {
+            var transactions = await _borrowTransactionRepository.GetTransactionsByUserAsync(userId);
+            var bookIds = transactions.Select(t => t.BookId).Distinct();
+
+            var books = new List<Book>();
+            foreach (var bookId in bookIds)
+            {
+                var book = await _bookRepository.GetBookByIdAsync(bookId);
+                if (book != null)
+                {
+                    books.Add(book);
+                }
+            }
+
+            return books;
         }
     }
 }

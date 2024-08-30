@@ -18,6 +18,10 @@ namespace LibraryManagement.Repositories
         Task SaveChangesAsync();
         Task<BorrowTransaction> GetTransactionAsync(Guid bookId, string userId);
         Task<IDbContextTransaction> BeginTransactionAsync();
+        Task<int> CountTransactionsByBookAndUserAsync(Guid bookId, string userId);
+        
+        //Task RemoveTransactionsByBookAndUserAsync(Guid bookId, string userId);
+        //Task RemoveByBookAndUserAsync(Guid bookId, string userId);
         //Task DeleteBookAsync(Guid id);
     }
 }

@@ -65,6 +65,11 @@ namespace LibraryManagement.Repositories
         {
             return await _context.Database.BeginTransactionAsync();
         }
+        public async Task<int> CountTransactionsByBookAndUserAsync(Guid bookId, string userId)
+        {
+            return await _context.BorrowTransactions
+                .CountAsync(t => t.BookId == bookId && t.UserId == userId);
+        }
 
         /*public async Task DeleteBookAsync(Guid id)
         {

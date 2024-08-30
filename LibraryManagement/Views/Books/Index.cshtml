@@ -141,15 +141,20 @@
                 <td>@item.TotalCopies</td>
                 <td>@item.AvailableCopies</td>
                 <td>
-                    <button type="button" class="btn btn-primary borrow-btn" data-id="@item.Id" @(item.AvailableCopies <= 0 ? "disabled" : "")>
+                    @* <button type="button" class="btn btn-primary borrow-btn" data-id="@item.Id" @(item.AvailableCopies <= 0 ? "disabled" : "")>
                         Borrow
-                    </button>
+                    </button> *@
+                    <form id="borrowForm-@item.Id" method="post" action="@Url.Action("Borrow", "Books")">
+                        <input type="hidden" name="bookId" value="@item.Id" />
+                        <button type="submit" class="btn btn-primary borrow-btn">Borrow</button>
+                    </form>
                     @if (SignInManager.IsSignedIn(User))
                     {
                         var currentUser = await UserManager.GetUserAsync(User);
                         @if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
                         {
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                            <a class="btn btn-info" asp-action="BookDetails" asp-route-id="@item.Id">View Details</a>
                         }
                     }
                 </td>
@@ -159,67 +164,29 @@
 </table>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        $(document).ready(function () {
-            $('.borrow-btn').click(function () {
-                var button = $(this);
-                var bookId = button.data('id'); // Ensure this matches your button's data attribute
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent the default form submission
 
-                // Confirm with the user before making the request
-                if (!confirm("Are you sure you want to borrow this book?")) {
-                    return;
-                }
-
-                $.ajax({
-                    url: '@Url.Action("Borrow", "Books")', // Endpoint for the Borrow action
-                    type: 'POST',
-                    data: JSON.stringify({ bookId: bookId }), // Send data as JSON string
-                    contentType: 'application/json', // Set content type to JSON
-                    success: function (response) {
-                        if (response.success) {
-                            updateTable(); // Refresh the table
-                        } else {
-                            console.error('Server response indicates failure:', response.message);
-                            $('#error-message').text('Error: ' + response.message).show();
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error occurred:', {
-                            status: status,
-                            error: error,
-                            responseText: xhr.responseText
-                        });
-
-                        $('#error-message').text('An error occurred: ' + xhr.responseText).show();
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                     }
                 });
 
-                // Optionally disable the button if no copies are available
-                if (button.data('available-copies') <= 0) {
-                    button.prop('disabled', true).text('Out of Stock');
+                if (response.ok) {
+                    location.reload();
+                    // Redirect to /MyBooks on success
+                    //window.location.href = '/MyBooks';
+                } else {
+                    alert('Error borrowing the book.');
                 }
             });
         });
-
-        function updateTable() {
-            // Reload the table contents using AJAX or any other method
-            $.ajax({
-                url: '@Url.Action("GetBooks", "Books")', // Example endpoint for fetching books
-                type: 'GET',
-                success: function (data) {
-                    // Assume you have a method to update the table with new data
-                    $('#booksTableBody').html(data); // Replace with actual data update logic
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error occurred while updating table:', {
-                        status: status,
-                        error: error,
-                        responseText: xhr.responseText
-                    });
-                }
-            });
-        }
     </script>
 }
-

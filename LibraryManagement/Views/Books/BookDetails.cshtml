@@ -1,0 +1,72 @@
+@* @model BookDetailsViewModel
+
+@{
+    ViewData["Title"] = "Book Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>@Model.Book.Name</h3>
+
+<p><strong>Total Copies:</strong> @Model.Book.TotalCopies</p>
+<p><strong>Available Copies:</strong> @Model.Book.AvailableCopies</p>
+
+<h4>Borrowed by:</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Borrowed Copies</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model.BorrowTransactions)
+        {
+            <tr>
+                <td>@transaction.UserName</td>
+                <td>@transaction.BorrowedCopies</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-secondary" asp-action="Index">Back to List</a> *@
+
+
+
+
+@model LibraryManagement.ViewModels.BookDetailsViewModel
+
+
+<h2>@Model.BookName</h2>
+
+<p>Total Copies: @Model.TotalCopies</p>
+<p>Available Copies: @Model.AvailableCopies</p>
+
+<h3>Borrowers</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Copies Borrowed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Borrowers != null && Model.Borrowers.Any())
+        {
+            foreach (var borrower in Model.Borrowers)
+            {
+                <tr>
+                    <td>@borrower.UserName</td>
+                    <td>@borrower.CopiesBorrowed</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">No borrowers</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -17,5 +17,8 @@ namespace LibraryManagement.Services
         Task<bool> IsBookAvailableAsync(Guid id);
         Task BorrowBookAsync(Guid bookId, string userId);
         Task ReturnBookAsync(Guid bookId, string userId);
+        Task<IEnumerable<Book>> GetBorrowedBooksAsync(string userId);
+        
+        //Task RemoveTransactionsByBookAndUserAsync(Guid bookId, string userId);
     }
 }

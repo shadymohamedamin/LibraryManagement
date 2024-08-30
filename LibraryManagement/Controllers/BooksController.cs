@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Identity;
+using LibraryManagement.Repositories;
+using LibraryManagement.ViewModels;
+using LibraryManagement.Data;
 
 namespace LibraryManagement.Controllers
 {
@@ -14,15 +17,20 @@ namespace LibraryManagement.Controllers
     public class BooksController : Controller
     {
         private readonly IBookService _bookService;
+        private readonly IBookRepository _bookRepository;
         private readonly ILogger<BooksController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IBorrowTransactionService _borrowTransactionService;
+        private readonly ApplicationDbContext _context;
 
-        public BooksController(IBookService bookService, ILogger<BooksController> logger, UserManager<IdentityUser> userManager)
+        public BooksController(ApplicationDbContext context,IBookRepository bookRepository, IBookService bookService, IBorrowTransactionService borrowTransactionService, ILogger<BooksController> logger, UserManager<IdentityUser> userManager)
         {
             _bookService = bookService;
+            _context = context;
+            _bookRepository = bookRepository;
             _logger = logger;
             _userManager = userManager;
-            
+            _borrowTransactionService = borrowTransactionService;
         }
 
         public async Task<IActionResult> Index()
@@ -132,6 +140,12 @@ namespace LibraryManagement.Controllers
                         return View(book);
                     }
 
+                    if (book.TotalCopies > existingBook.TotalCopies)
+                    {
+                        var difference = book.TotalCopies - existingBook.TotalCopies;
+                        existingBook.AvailableCopies += difference;
+                    }
+
                     // Update the book
                     existingBook.Name = book.Name;
                     existingBook.TotalCopies = book.TotalCopies;
@@ -149,7 +163,7 @@ namespace LibraryManagement.Controllers
             return View(book);
         }
 
-[HttpPost]
+/*[HttpPost]
 [ValidateAntiForgeryToken]
 public async Task<IActionResult> Borrow(Guid bookId)
 {
@@ -198,17 +212,214 @@ public async Task<IActionResult> Borrow(Guid bookId)
         _logger.LogError(ex, "Error occurred while borrowing book with ID: {BookId}", bookId);
         return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
     }
+}*/
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Borrow(Guid bookId)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            await _bookService.BorrowBookAsync(bookId, user.Id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error borrowing book");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+
+
+
+
+        // public async Task<IActionResult> MyBooks()
+        // {
+        //     var currentUser = await _userManager.GetUserAsync(User);
+        //     if (currentUser == null)
+        //     {
+        //         return RedirectToAction("Login", "Account");
+        //     }
+
+        //     var borrowedBooks = await _bookService.GetBorrowedBooksAsync(currentUser.Id);
+        //     return View(borrowedBooks);
+        // }
+        public async Task<IActionResult> MyBooks()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var borrowedBooks = await _borrowTransactionService.GetBorrowedBooksByUserAsync(user.Id);
+            return View(borrowedBooks);
+        }
+        // public async Task<IActionResult> MyBooks()
+        // {
+        //     var userId = User.Identity.Name; // Or however you get the current user's ID
+        //     var borrowedBooks = await _borrowTransactionService.GetBorrowedBooksByUserAsync(userId);
+
+        //     return View(borrowedBooks);
+        // }
+
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> ReturnBook(Guid bookId)
+        // {
+        //     if (bookId == Guid.Empty)
+        //     {
+        //         return BadRequest();
+        //     }
+
+        //     try
+        //     {
+        //         // Get the current user
+        //         var user = await _userManager.GetUserAsync(User);
+        //         if (user == null)
+        //         {
+        //             return Unauthorized();
+        //         }
+
+        //         // Get the book and existing borrow transactions
+        //         var book = await _bookService.GetBookByIdAsync(bookId);
+        //         if (book == null)
+        //         {
+        //             return NotFound();
+        //         }
+
+        //         // Remove all borrow transactions for the current user and the specified book
+        //         await _borrowTransactionService.RemoveTransactionsByBookAndUserAsync(bookId, user.Id);
+
+        //         // Update the available copies of the book
+        //         book.AvailableCopies++;
+        //         await _bookService.UpdateBookAsync(book);
+
+        //         return Ok();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error returning the book");
+        //         return StatusCode(500, "Internal server error");
+        //     }
+        // }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReturnBook(Guid bookId)
+        {
+            if (bookId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                await _bookService.ReturnBookAsync(bookId, user.Id);
+
+                return RedirectToAction(nameof(MyBooks)); // Adjust the action name as needed
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error returning the book");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
+
+        /*public async Task<IActionResult> BookDetails(Guid id)
+        {
+            var book = await _bookService.GetBookByIdAsync(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var transactions = await _borrowTransactionService.GetTransactionsByBookAsync(id);
+
+            var viewModel = new BookDetailsViewModel
+            {
+                Book = book,
+                BorrowTransactions = transactions
+                    .Select(t => new BorrowedBookViewModel
+                    {
+                        UserName = t.UserName, // Adjust according to your model
+                        BorrowedCopies = t.Copies // Adjust according to your model
+                    })
+                    .ToList()
+            };
+
+            return View(viewModel);
+        }*/
+        // public async Task<IActionResult> BookDetails(Guid bookId)
+        // {
+        //     var transactions = await _borrowTransactionService.GetTransactionsByBookAsync(bookId);
+        //     // Prepare the view model and return the view
+        //     return View(transactions);
+        // }
+        // public async Task<IActionResult> BookDetails(Guid id)
+        // {
+        //     var viewModel = await _borrowTransactionService.GetBookDetailsAsync(id);
+
+        //     if (viewModel == null)
+        //     {
+        //         return NotFound(); // Handle not found case
+        //     }
+
+        //     return View(viewModel);
+        // }
+       public async Task<IActionResult> BookDetails(Guid bookId)
+{
+    var book = await _bookRepository.GetBookByIdAsync(bookId);
+    if (book == null)
+    {
+        return NotFound(); // Handle not found case
+    }
+
+    var borrowTransactions = await _context.BorrowTransactions
+        .Where(bt => bt.BookId == bookId)
+        .Include(bt => bt.User) // Ensure User is loaded
+        .ToListAsync();
+
+    var viewModel = new BookDetailsViewModel
+    {
+        BookId = book.Id,
+        BookName = book.Name,
+        TotalCopies = book.TotalCopies,
+        AvailableCopies = book.AvailableCopies,
+        Borrowers = borrowTransactions.Select(bt => new UserBookViewModel
+        {
+            UserName = bt.User?.UserName ?? "Unknown User", // Handle null User
+            CopiesBorrowed = book.AvailableCopies//bt.Copies // Use the correct property to show borrowed count
+        }).ToList()
+    };
+
+    return View(viewModel);
 }
 
 
 
 
 
-        public IActionResult MyBooks()
-        {
-            // Implement logic to display user's borrowed books
-            return View();
-        }
+
         // [HttpPost]
         // public async Task<IActionResult> Delete(int id)
         // {

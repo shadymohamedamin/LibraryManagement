@@ -21,7 +21,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
-
+builder.Services.AddScoped<IBorrowTransactionRepository, BorrowTransactionRepository>();
+builder.Services.AddScoped<IBorrowTransactionService, BorrowTransactionService>();
 
 var app = builder.Build();
 

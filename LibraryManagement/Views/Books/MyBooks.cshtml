@@ -1,0 +1,129 @@
+@* @using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model IEnumerable<Book>
+
+@{
+    ViewData["Title"] = "My Books";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Total Copies</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="booksTableBody">
+        @foreach (var item in Model)
+        {
+            <tr id="book-@item.Id">
+                <td>@item.Name</td>
+                <td>@item.TotalCopies</td>
+                <td>
+                    <form asp-action="ReturnBook" method="post">
+                        <input type="hidden" name="bookId" value="@item.Id" />
+                        <button type="submit" class="btn btn-primary" 
+                                @(item.AvailableCopies == 0 ? "disabled" : "")>Return</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                if (response.ok) {
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('Error returning the book.');
+                }
+            });
+        });
+    </script>
+} *@
+
+
+
+
+@using LibraryManagement.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<LibraryManagement.ViewModels.BorrowedBookViewModel>
+@* @model IEnumerable<BorrowedBookViewModel> *@
+
+@{
+    ViewData["Title"] = "My Books";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Copies Borrowed</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="booksTableBody">
+        @foreach (var item in Model)
+        {
+            <tr id="book-@item.BookId">
+                <td>@item.BookName</td>
+                <td>@item.CopiesBorrowed</td>
+                <td>
+                    <form asp-action="ReturnBook" method="post">
+                        <input type="hidden" name="bookId" value="@item.BookId" />
+                        <button type="submit" class="btn btn-primary">Return</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                if (response.ok) {
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('Error returning the book.');
+                }
+            });
+        });
+    </script>
+}
